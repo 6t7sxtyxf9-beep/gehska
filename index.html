@@ -2,191 +2,462 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Sainsbury's Barcode Generator</title>
+  <title>GenBurys</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #111;
-      color: #eee;
-      margin: 0;
-      padding: 1rem;
-      text-align: center;
-      transition: background 0.3s, color 0.3s;
+    *{
+      margin:0;
+      padding:0;
+      box-sizing:border-box;
     }
 
-    .container {
-      background: #222;
-      color: #fff;
-      padding: 1.5rem;
-      border-radius: 1rem;
-      max-width: 450px;
-      margin: auto;
-      box-shadow: 0 0 10px rgba(0,0,0,0.5);
+    :root{
+      --bg:#0a0a0a;
+      --card:#111111;
+      --card2:#181818;
+      --orange:#ff7a1a;
+      --orange-dark:#d95f00;
+      --text:#f2f2f2;
+      --sub:#8c8c8c;
+      --border:#242424;
     }
 
-    img {
-      max-width: 100%;
-      height: auto;
+    body{
+      font-family: Inter, Arial, sans-serif;
+      background:
+      radial-gradient(circle at top left, rgba(255,122,26,0.12), transparent 25%),
+      radial-gradient(circle at bottom right, rgba(255,122,26,0.08), transparent 30%),
+      var(--bg);
+
+      color:var(--text);
+      min-height:100vh;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      padding:20px;
+      overflow:hidden;
+
+      animation:fadeIn 1s ease;
     }
 
-    input, button {
-      padding: 0.6rem;
-      margin: 0.5rem 0;
-      font-size: 1rem;
-      border-radius: 0.4rem;
-      border: none;
+    @keyframes fadeIn{
+      from{
+        opacity:0;
+        transform:translateY(15px);
+      }
+      to{
+        opacity:1;
+        transform:translateY(0);
+      }
     }
 
-    input[type="text"], input[type="number"] {
-      width: calc(100% - 1rem);
+    @keyframes pulseGlow{
+      0%{
+        box-shadow:0 0 0 rgba(255,122,26,0);
+      }
+      50%{
+        box-shadow:0 0 25px rgba(255,122,26,0.18);
+      }
+      100%{
+        box-shadow:0 0 0 rgba(255,122,26,0);
+      }
     }
 
-    button.price-button {
-      background: #f47738;
-      color: #fff;
-      font-weight: bold;
-      margin: 0.3rem;
-      cursor: pointer;
-      transition: background 0.2s;
+    .container{
+      width:100%;
+      max-width:520px;
+      background:linear-gradient(145deg,var(--card),var(--card2));
+      border:1px solid var(--border);
+      border-radius:28px;
+      padding:30px;
+      animation:fadeIn 1s ease;
+      animation-fill-mode:forwards;
+      animation-delay:.15s;
+      opacity:0;
+      backdrop-filter:blur(12px);
     }
 
-    button.price-button:hover {
-      background: #d85c20;
+    .logo{
+      text-align:center;
+      margin-bottom:10px;
+      font-size:2.7rem;
+      font-weight:800;
+      letter-spacing:1px;
+      color:var(--orange);
+      animation:pulseGlow 4s infinite;
     }
 
-    .barcode-frame {
-      background: #fff;
-      padding: 1rem;
-      border-radius: 0.8rem;
-      margin-top: 1rem;
+    .subtitle{
+      text-align:center;
+      color:var(--sub);
+      margin-bottom:30px;
+      font-size:.95rem;
     }
 
-    canvas {
-      max-width: 100%;
+    .input-group{
+      margin-bottom:18px;
     }
 
-    .watermark {
-      font-size: 0.8rem;
-      color: #444;
-      margin-top: 0.5rem;
+    label{
+      display:block;
+      margin-bottom:8px;
+      color:var(--sub);
+      font-size:.9rem;
     }
 
-    .dark-mode-toggle {
-      background: #333;
-      color: #fff;
-      border: 1px solid #666;
-      margin-top: 1rem;
+    input{
+      width:100%;
+      padding:16px;
+      border-radius:18px;
+      border:1px solid var(--border);
+      background:#0d0d0d;
+      color:var(--text);
+      outline:none;
+      transition:.25s;
+      font-size:1rem;
     }
 
-    body.light-mode {
-      background: #f0f0f0;
-      color: #333;
+    input:focus{
+      border-color:var(--orange);
+      box-shadow:0 0 0 4px rgba(255,122,26,0.12);
     }
 
-    body.light-mode .container {
-      background: #fff;
-      color: #000;
+    .button-grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:12px;
+      margin-top:15px;
     }
 
-    body.light-mode button.price-button {
-      background: #f47738;
+    button{
+      border:none;
+      cursor:pointer;
+      transition:.25s;
+      border-radius:18px;
+      font-weight:700;
+      font-size:.96rem;
     }
 
-    body.light-mode .dark-mode-toggle {
-      background: #ddd;
-      color: #333;
+    .price-button{
+      background:linear-gradient(145deg,var(--orange),var(--orange-dark));
+      color:white;
+      padding:16px;
+    }
+
+    .price-button:hover{
+      transform:translateY(-2px) scale(1.02);
+      filter:brightness(1.08);
+    }
+
+    .secondary-btn{
+      width:100%;
+      margin-top:12px;
+      padding:16px;
+      background:#151515;
+      color:var(--text);
+      border:1px solid var(--border);
+    }
+
+    .secondary-btn:hover{
+      border-color:var(--orange);
+      color:var(--orange);
+    }
+
+    #customPriceContainer{
+      display:none;
+      animation:fadeIn .4s ease;
+    }
+
+    .barcode-frame{
+      background:white;
+      border-radius:24px;
+      padding:20px;
+      margin-top:28px;
+      animation:fadeIn .8s ease;
+    }
+
+    canvas{
+      width:100%;
+      height:auto;
+    }
+
+    .watermark{
+      text-align:center;
+      color:#666;
+      font-size:.75rem;
+      margin-top:8px;
+    }
+
+    .toggle-wrap{
+      margin-top:18px;
+    }
+
+    .dark-mode-toggle{
+      width:100%;
+      padding:15px;
+      background:#121212;
+      color:var(--orange);
+      border:1px solid var(--border);
+    }
+
+    .dark-mode-toggle:hover{
+      background:#1b1b1b;
+    }
+
+    /* PASSWORD SCREEN */
+
+    #lockScreen{
+      position:fixed;
+      inset:0;
+      background:#050505;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      z-index:999;
+      animation:fadeIn .5s ease;
+    }
+
+    .lock-box{
+      width:100%;
+      max-width:400px;
+      background:#111;
+      border:1px solid #222;
+      border-radius:24px;
+      padding:30px;
+      text-align:center;
+    }
+
+    .lock-title{
+      font-size:2rem;
+      color:var(--orange);
+      font-weight:800;
+      margin-bottom:10px;
+    }
+
+    .lock-sub{
+      color:#777;
+      margin-bottom:20px;
+    }
+
+    .error{
+      color:#ff4d4d;
+      margin-top:12px;
+      display:none;
+    }
+
+    @media(max-width:520px){
+      .button-grid{
+        grid-template-columns:1fr;
+      }
+
+      .container{
+        padding:22px;
+      }
     }
   </style>
 </head>
+
 <body>
 
-<div class="container">
-  <img src="https://monkeymansilly1.github.io/Sainsbury-sgen/sainsburys-logo-png-transparent.png" alt="Sainsbury's Logo" />
+<!-- PASSWORD SCREEN -->
 
-  <input type="text" id="productCode" placeholder="Enter 13-digit barcode" maxlength="13"
-         oninput="this.value=this.value.replace(/\\D/g,'').slice(0,13)" />
+<div id="lockScreen">
+  <div class="lock-box">
+    <div class="lock-title">GenBurys</div>
+    <div class="lock-sub">Enter password to continue</div>
 
-  <div>
+    <input type="password" id="passwordInput" placeholder="Password" />
+
+    <button class="price-button" style="width:100%;margin-top:14px;" onclick="checkPassword()">
+      Unlock
+    </button>
+
+    <div class="error" id="errorText">
+      Incorrect password
+    </div>
+  </div>
+</div>
+
+<!-- MAIN SITE -->
+
+<div class="container" id="mainSite" style="display:none;">
+
+  <div class="logo">GenBurys</div>
+  <div class="subtitle">
+    Matte Edition Barcode Generator
+  </div>
+
+  <div class="input-group">
+    <label>Product Barcode</label>
+
+    <input
+      type="text"
+      id="productCode"
+      placeholder="Enter 13-digit barcode"
+      maxlength="13"
+      oninput="this.value=this.value.replace(/\D/g,'').slice(0,13)"
+    />
+  </div>
+
+  <div class="button-grid">
     <button class="price-button" onclick="setPriceAndGenerate(10)">10p</button>
     <button class="price-button" onclick="setPriceAndGenerate(49)">49p</button>
     <button class="price-button" onclick="setPriceAndGenerate(100)">£1</button>
     <button class="price-button" onclick="showCustomPrice()">Custom</button>
   </div>
 
-  <div id="customPriceContainer" style="display:none;">
-    <input type="number" id="price" placeholder="Enter price in pence" min="1" max="9999" />
-    <button onclick="generateBarcode()">Generate Barcode</button>
+  <div id="customPriceContainer">
+    <div class="input-group" style="margin-top:15px;">
+      <label>Custom Price</label>
+
+      <input
+        type="number"
+        id="price"
+        placeholder="Enter price in pence"
+        min="1"
+        max="9999"
+      />
+    </div>
+
+    <button class="secondary-btn" onclick="generateBarcode()">
+      Generate Barcode
+    </button>
   </div>
 
   <div class="barcode-frame">
     <canvas id="barcodeCanvas" width="400" height="150"></canvas>
-    <div class="watermark">monkeymansilly1.github.io</div>
+
+    <div class="watermark">
+      GenBurys Matte UI
+    </div>
   </div>
 
-  <button class="dark-mode-toggle" onclick="toggleDarkMode()">Toggle Dark Mode</button>
+  <div class="toggle-wrap">
+    <button class="dark-mode-toggle" onclick="toggleDarkMode()">
+      Toggle Theme
+    </button>
+  </div>
+
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
 
 <script>
+
+const SITE_PASSWORD = ".gg/star";
+
+function checkPassword(){
+  const input = document.getElementById("passwordInput").value;
+
+  if(input === SITE_PASSWORD){
+
+    document.getElementById("lockScreen").style.animation =
+      "fadeIn .4s ease reverse";
+
+    setTimeout(() => {
+      document.getElementById("lockScreen").style.display = "none";
+      document.getElementById("mainSite").style.display = "block";
+    }, 350);
+
+  } else {
+    document.getElementById("errorText").style.display = "block";
+  }
+}
+
 function padLeft(str, length) {
   return str.toString().padStart(length, '0');
 }
 
 function calculateCheckDigit(input) {
   let sum = 0;
+
   for (let i = 0; i < input.length; i++) {
     const digit = parseInt(input[input.length - 1 - i], 10);
     const weight = (i % 2 === 0) ? 3 : 1;
     sum += digit * weight;
   }
+
   let checkDigit = (10 - (sum % 10)) % 10;
   return checkDigit;
 }
 
 function generateBarcode() {
-  const productInput = document.getElementById('productCode').value;
-  const priceInput = document.getElementById('price').value;
+
+  const productInput =
+    document.getElementById('productCode').value;
+
+  const priceInput =
+    document.getElementById('price').value;
 
   if (!productInput || productInput.length < 8) {
     alert("Enter a valid barcode (at least 8 digits).");
     return;
   }
 
-  const numericProduct = productInput.replace(/\D/g, '');
-  let productDigits = numericProduct.length === 14 ? numericProduct.slice(0, -1) : numericProduct;
+  const numericProduct =
+    productInput.replace(/\D/g, '');
+
+  let productDigits =
+    numericProduct.length === 14
+    ? numericProduct.slice(0, -1)
+    : numericProduct;
+
   productDigits = padLeft(productDigits, 13);
 
   const paddedPrice = padLeft(priceInput, 6);
-  const baseNumber = `91${productDigits}${paddedPrice}`;
-  const checkDigit = calculateCheckDigit(baseNumber);
-  const fullBarcode = `${baseNumber}${checkDigit}`;
 
-  const canvas = document.getElementById("barcodeCanvas");
-  JsBarcode(canvas, fullBarcode, {
-    format: "CODE128",
-    displayValue: true,
-    fontSize: 16,
-    width: 2,
-    height: 80,
-    margin: 5
-  });
+  const baseNumber =
+    `91${productDigits}${paddedPrice}`;
+
+  const checkDigit =
+    calculateCheckDigit(baseNumber);
+
+  const fullBarcode =
+    `${baseNumber}${checkDigit}`;
+
+  const canvas =
+    document.getElementById("barcodeCanvas");
+
+  canvas.style.opacity = "0";
+
+  setTimeout(() => {
+
+    JsBarcode(canvas, fullBarcode, {
+      format: "CODE128",
+      displayValue: true,
+      fontSize: 16,
+      width: 2,
+      height: 80,
+      margin: 5
+    });
+
+    canvas.style.transition = ".4s";
+    canvas.style.opacity = "1";
+
+  }, 180);
 }
 
 function setPriceAndGenerate(pence) {
+
   document.getElementById('price').value = pence;
-  document.getElementById('customPriceContainer').style.display = 'none';
+
+  document.getElementById('customPriceContainer').style.display =
+    'none';
+
   generateBarcode();
 }
 
 function showCustomPrice() {
-  document.getElementById('customPriceContainer').style.display = 'block';
+
+  document.getElementById('customPriceContainer').style.display =
+    'block';
 }
 
 function toggleDarkMode() {
   document.body.classList.toggle("light-mode");
 }
+
 </script>
 
 </body>
